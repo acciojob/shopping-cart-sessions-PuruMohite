@@ -9,7 +9,7 @@ const products = [
   { id: 5, name: "Product 5", price: 50 },
 ];
 
-let shoppingCart = sessionStorage.getItem("shoppingCart")? JSON.parse(sessionStorage.getItem("shoppingCart")): [];
+let cart = sessionStorage.getItem("cart")? JSON.parse(sessionStorage.getItem("cart")): [];
 
 // DOM elements
 const productList = document.getElementById("product-list");
@@ -39,10 +39,10 @@ Array.from(document.getElementsByClassName('add-to-cart-btn')).forEach((elem) =>
 // Render cart list
 function renderCart() {
     cartList.innerHTML = "";
-    if(!sessionStorage.getItem("shoppingCart")){
+    if(!sessionStorage.getItem("cart")){
         return;
     }
-    let currentCart = JSON.parse(sessionStorage.getItem("shoppingCart"))
+    let currentCart = JSON.parse(sessionStorage.getItem("cart"))
     currentCart.forEach((elem,index) => {
         const li = document.createElement("li");
         li.innerHTML = `${elem.name} - $${elem.price} <button class="remove-from-cart-btn" data-id="${elem.id}" data-uq="${index}" onclick="removeFromCart(${index})">Remove from Cart</button>`;
@@ -53,25 +53,25 @@ function renderCart() {
 
 // Add item to cart
 function addToCart(productId) {
-    shoppingCart.push(products[productId-1]);
-    // console.log("Shopping cart is: ", shoppingCart);
-    sessionStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
+    cart.push(products[productId-1]);
+    // console.log("Shopping cart is: ", cart);
+    sessionStorage.setItem("cart", JSON.stringify(cart));
     renderCart();
 }
 
 // Remove item from cart
 function removeFromCart(uniqueIndex) {
-    shoppingCart = shoppingCart.filter((product,index) => {
+    cart = cart.filter((product,index) => {
         return uniqueIndex != index
     })
-    sessionStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
+    sessionStorage.setItem("cart", JSON.stringify(cart));
     renderCart();
 }
 
 // Clear cart
 function clearCart() {
-    shoppingCart.length = 0;
-    sessionStorage.removeItem("shoppingCart");
+    cart.length = 0;
+    sessionStorage.removeItem("cart");
     cartList.innerHTML = ``;
 }
 
