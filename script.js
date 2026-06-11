@@ -9,10 +9,18 @@ const products = [
   { id: 5, name: "Product 5", price: 50 },
 ];
 
+let shoppingCart = sessionStorage.getItem("shoppingCart")? JSON.parse(sessionStorage.getItem("shoppingCart")): [];
+
 // DOM elements
 const productList = document.getElementById("product-list");
+const cartList = document.getElementById("cart-list")
+const clearCartBtn = document.getElementById("clear-cart-btn");
 
+renderProducts();
+renderCart();
 // Render product list
+
+clearCartBtn.addEventListener('click', clearCart);
 function renderProducts() {
   products.forEach((product) => {
     const li = document.createElement("li");
@@ -21,18 +29,51 @@ function renderProducts() {
   });
 }
 
+Array.from(document.getElementsByClassName('add-to-cart-btn')).forEach((elem) => {
+    elem.addEventListener('click', () => {
+        addToCart(elem.getAttribute('data-id'));
+    })
+})
+
+
 // Render cart list
-function renderCart() {}
+function renderCart() {
+    cartList.innerHTML = "";
+    if(!sessionStorage.getItem("shoppingCart")){
+        return;
+    }
+    let currentCart = JSON.parse(sessionStorage.getItem("shoppingCart"))
+    currentCart.forEach((elem,index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `${elem.name} - $${elem.price} <button class="remove-from-cart-btn" data-id="${elem.id}" data-uq="${index}" onclick="removeFromCart(${index})">Remove from Cart</button>`;
+        cartList.appendChild(li);
+    })
+    
+}
 
 // Add item to cart
-function addToCart(productId) {}
+function addToCart(productId) {
+    shoppingCart.push(products[productId-1]);
+    // console.log("Shopping cart is: ", shoppingCart);
+    sessionStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
+    renderCart();
+}
 
 // Remove item from cart
-function removeFromCart(productId) {}
+function removeFromCart(uniqueIndex) {
+    shoppingCart = shoppingCart.filter((product,index) => {
+        return uniqueIndex != index
+    })
+    sessionStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
+    renderCart();
+}
 
 // Clear cart
-function clearCart() {}
+function clearCart() {
+    shoppingCart.length = 0;
+    sessionStorage.removeItem("shoppingCart");
+    cartList.innerHTML = ``;
+}
 
 // Initial render
-renderProducts();
-renderCart();
+
